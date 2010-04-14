@@ -1,0 +1,23 @@
+The intention of this project is first to see if it is feasible to create an in-context in-browser editor as described at:
+
+http://stackoverflow.com/questions/2626262/am-i-crazy-how-should-i-create-a-jquery-content-editor
+
+The steps I'll probably be taking initially are:
+
+1. Add our default Spike@School template with some content in it for testing. This is a fairly complex template that should serve as a good starting point to get editing up and running.
+2. Develop the easy triggering of an editable area. I plan to make it as easy as clicking on the area that is marked as being allowed for editing. The visual marking will be handled by a CSS style that will perhaps outline the area lightly. The end intention is to allow for unlimited 'areas' to be marked as editable, but our templates generally only have one.
+3. Develop a simple fixed-position toolbar that will offer all of the advanced editing options to the user. Right clicking will also be implemented later on down the track to cater for things like tables and images.
+4. I'm planning to use Firefox and Safari as my test browsers initially because I'm on a Mac. IE compatibility will also be important, but it's better to get something running first and then make it compatible.
+5. I have always appreciated Dreamweaver's property inspector, and the KTML editor also has a variant of this. I intent to investigate having a floating property inspector fixed to the bottom of the window to cater for things like quickly changing the properties of certain elements. I also appreciate Dreamweaver's tag selector, so we'll see where we get to with that. Let's start simply :)
+6. Pasting from Word is a biggie and I'll investigate the various libraries that exist for this already.
+7. There are bound to be more little things to look at along the way, so I'll be updating this list for sure.
+
+I've decided to base the project on jQuery.
+
+Any contributions are very welcome, and I'm deadly serious about this becoming a successful project. It's likely my average talent in Javascript will become an issue as the project matures, but I'm fully prepared to learn the best patterns for doing things, and would welcome any input.
+
+It is intended that this editor will be implemented for our commercial CMS Spike@School (www.spikeatschool.co.nz) which is a Rails based web-app. I'll probably end up making a separate gem or something to integrate the editor more tightly into a Rails context.
+
+I also promise that I'll take this project down if it starts to gather dust due to unforeseen hardness so as not to confuse people with yet another half-finished or underspec'd editor! :D
+
+This project is open source.
