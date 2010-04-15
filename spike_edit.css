@@ -1,0 +1,13 @@
+.spikeEditable {
+	outline: none;
+}
+.spikeEditable:hover {
+	box-shadow: 0px 0px 15px #6FAEE4;
+	-webkit-box-shadow: 0px 0px 15px #6FAEE4;
+	-moz-box-shadow: 0px 0px 15px #6FAEE4;
+}
+.spikeEditable:focus {
+	box-shadow: 0px 0px 15px #6FAEE4;
+	-webkit-box-shadow: 0px 0px 15px #6FAEE4;
+	-moz-box-shadow: 0px 0px 15px #6FAEE4;
+}
