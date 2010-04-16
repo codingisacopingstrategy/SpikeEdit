@@ -6,7 +6,7 @@ jQuery(function($) {
 			
 		});
 		$(this).blur(function() {
-			
+			$("#debug").text($(this).html());
 		});
 	});
 });
