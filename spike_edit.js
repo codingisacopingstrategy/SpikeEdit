@@ -14,9 +14,14 @@ jQuery(function($) {
 		});
 	});
 	
+	// Create toolbar buttons
+	bold_button = $("<a href='#'>Bold</a>").click(function() {
+		document.execCommand("bold");
+	});
+
 	// Create the toolbar at the top of the screen
 	$("body").append($("<div id='spikeToolbar'></div>"));
-	$("#spikeToolbar").append($("<a href='#'>Bold</a>"))
+	$("#spikeToolbar").append(bold_button)
 					  .append(" | ")
 					  .append($("<a href='#'>Italic</a>"))
 					  .append(" | ")
