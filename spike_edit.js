@@ -7,13 +7,15 @@ jQuery(function($) {
 			this.contentEditable = true;
 			$(this).addClass("spikeEditable");
 			$(this).focus(function() {
-				var current_focused_editable = $(this);
+				current_focused_editable = $(this);
 			});
 			$(this).blur(function() {
 				// This will help us debug the code that a browser generates when we do something
 				$("#debug").text($(this).html());
 			});
 		});
+		
+		document.execCommand("styleWithCSS", false, false);
 	}
 	
 	function createToolbar() {
@@ -22,13 +24,21 @@ jQuery(function($) {
 			spikeExecCommand("bold", false, null);
 		});
 
+		italic_button = $("<a href='#'>Italic</a>").click(function() {
+			spikeExecCommand("italic", false, null);
+		});
+
+		underline_button = $("<a href='#'>Underline</a>").click(function() {
+			spikeExecCommand("underline", false, null);
+		});
+
 		// Create the toolbar at the top of the screen
 		$("body").append($("<div id='spikeToolbar'></div>"));
 		$("#spikeToolbar").append(bold_button)
 						  .append(" | ")
-						  .append($("<a href='#'>Italic</a>"))
+						  .append(italic_button)
 						  .append(" | ")
-						  .append($("<a href='#'>Underline</a>"));
+						  .append(underline_button);
 	}
 	
 	// A function to clean up HTML generated
