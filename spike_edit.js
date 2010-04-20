@@ -15,7 +15,7 @@ jQuery(function($) {
 			});
 		});
 		
-		document.execCommand("styleWithCSS", false, false);
+		if (!$.browser.msie) { document.execCommand("styleWithCSS", false, false); }
 	}
 	
 	function createToolbar() {
