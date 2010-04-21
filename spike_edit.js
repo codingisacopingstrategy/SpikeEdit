@@ -13,6 +13,17 @@ jQuery(function($) {
 				// This will help us debug the code that a browser generates when we do something
 				$("#debug").text($(this).html());
 			});
+			
+			// Set all descendant nodes to report their properties
+			// to the propery inspector when clicked on
+			$("*", $(this)).each(function() {
+				$(this).click(function() {
+					if ($(this).attr("src"))
+					{
+						$("#spikePropertyInspector").html("Source: <input value='" + $(this).attr("src") + "'>");
+					}
+				});
+			});
 		});
 		
 		if (!$.browser.msie) { document.execCommand("styleWithCSS", false, false); }
