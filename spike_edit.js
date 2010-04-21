@@ -41,6 +41,11 @@ jQuery(function($) {
 						  .append(underline_button);
 	}
 	
+	function createPropertyInspector() {
+		// Create the property inspector at the bottom of the screen
+		$("body").append($("<div id='spikePropertyInspector'></div>"));
+	}
+	
 	// A function to clean up HTML generated
 	function cleanHTMLOutput() {
 		$(".editable").each(function() {
@@ -60,5 +65,6 @@ jQuery(function($) {
 	
 	activateEditableAreas();
 	createToolbar();
+	createPropertyInspector();
 	
 });

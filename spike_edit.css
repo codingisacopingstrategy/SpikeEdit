@@ -24,3 +24,15 @@
 	color: #FFFFFF;
 	text-decoration: none;
 }
+#spikePropertyInspector {
+	background-color: #000000;
+	color: #BBBBBB;
+	position: fixed;
+	bottom: 10px;
+	left: 10px;
+	right: 10px;
+	padding: 5px;
+	
+	/* TODO: Just to show what it will look like, remove when we have real content */
+	height: 100px;
+}
