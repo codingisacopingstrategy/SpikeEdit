@@ -18,9 +18,24 @@ jQuery(function($) {
 			// to the propery inspector when clicked on
 			$("*", $(this)).each(function() {
 				$(this).click(function() {
+					// Keep track of this elements for the events below
+					var clicked_element = $(this);
+					// Just concentrating on images for now
 					if ($(this).attr("src"))
 					{
-						$("#spikePropertyInspector").html("Source: <input value='" + $(this).attr("src") + "'>");
+						// Updates the property inspector with inputs for this element
+						$("#spikePropertyInspector").html(
+							"Source: <input name='src' value='" + $(this).attr("src") + "'>" + "<br>" +
+							"Width: <input name='width' value='" + $(this).attr("width") + "'>" + " " +
+							"Height: <input name='height' value='" + $(this).attr("height") + "'>"
+						);
+						// Sets a change event for each input that will update the relevant attribute
+						// on the clicked upon element
+						$("*", $("#spikePropertyInspector")).each(function() {
+							$(this).change(function() {
+								clicked_element.attr($(this).attr("name"), $(this).val());
+							});
+						});
 					}
 				});
 			});
