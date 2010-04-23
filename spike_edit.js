@@ -1,5 +1,5 @@
 jQuery(function($) {
-	
+		
 	function activateEditableAreas() {
 		// Loop through all elements with the class .editable and make them editable
 		// TODO: We might want to limit these elements to div's only
@@ -39,6 +39,11 @@ jQuery(function($) {
 					}
 				});
 			});
+			// Set all images to be resizable
+			// TODO: This code works ok in safari, but it creates too much mess, look for alternatives
+			// $("img", $(this)).each(function() {
+			// 	$(this).resizable({ handles: 'all', aspectRatio: true });
+			// });
 		});
 		
 		if (!$.browser.msie) { document.execCommand("styleWithCSS", false, false); }
