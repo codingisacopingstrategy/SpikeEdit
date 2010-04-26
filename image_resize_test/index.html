@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<style>
+img {
+    width: 200px;
+    height: auto;
+    position: relative;
+}
+img {
+	outline: solid 3px gray;
+}
+</style>
+
+
+</head>
+<body>
+
+<img id="image" src="../demo/spiketall.gif" />
+
+<script>
+var positionX;
+var startWidth;
+var image = document.getElementById('image');
+document.onmousedown = function(e) {
+    if(!e) e = window.event;
+    positionX = (e.clientX);
+    startWidth = image.width;
+    document.onmousemove = function(e) {
+        if(!e) e = window.event;
+        image.style.width = (startWidth + (e.clientX - positionX)) + 'px';
+    }
+}
+document.onmouseup = function() {
+    document.onmousemove = null;
+    positionX = null;
+    startWidth = null;
+}
+</script>
+</body>
+</html>
