@@ -11,31 +11,35 @@ img {
 	outline: solid 3px gray;
 }
 </style>
+<script src="../jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
 
+<script>
+jQuery(function($) {
+
+	var positionX;
+	var startWidth;
+	$("#image").mousedown(function(e) {
+		alert(e.pageX - $(this).offset().left);
+	    positionX = (e.clientX);
+	    startWidth = $(this).attr("width");
+	    $(document).mousemove(function(e) {
+	        $("#image").attr("width", (startWidth + (e.clientX - positionX)));
+	    });
+	});
+	$(document).mouseup(function() {
+	    $(document).unbind("mousemove");
+	    positionX = null;
+	    startWidth = null;
+	});
+
+});
+</script>
 
 </head>
 <body>
 
 <img id="image" src="../demo/spiketall.gif" />
 
-<script>
-var positionX;
-var startWidth;
-var image = document.getElementById('image');
-document.onmousedown = function(e) {
-    if(!e) e = window.event;
-    positionX = (e.clientX);
-    startWidth = image.width;
-    document.onmousemove = function(e) {
-        if(!e) e = window.event;
-        image.style.width = (startWidth + (e.clientX - positionX)) + 'px';
-    }
-}
-document.onmouseup = function() {
-    document.onmousemove = null;
-    positionX = null;
-    startWidth = null;
-}
-</script>
+
 </body>
 </html>

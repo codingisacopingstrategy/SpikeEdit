@@ -4,6 +4,8 @@ jQuery(function($) {
 		// Loop through all elements with the class .editable and make them editable
 		// TODO: We might want to limit these elements to div's only
 		$(".editable").each(function() {		
+			var editable_area = $(this);
+			
 			this.contentEditable = true;
 			$(this).addClass("spikeEditable");
 			$(this).focus(function() {
@@ -23,12 +25,22 @@ jQuery(function($) {
 					// Just concentrating on images for now
 					if ($(this).attr("src"))
 					{
+						var image = $(this);
+						var image_ratio = image.width() / image.height();
 						// Updates the property inspector with inputs for this element
 						$("#spikePropertyInspector").html(
 							"Source: <input name='src' value='" + $(this).attr("src") + "'>" + "<br>" +
-							"Width: <input name='width' value='" + $(this).attr("width") + "'>" + " " +
-							"Height: <input name='height' value='" + $(this).attr("height") + "'>"
+							"Width: <input name='width' value='" + $(this).width() + "'>" + " " +
+							"Height: <input name='height' value='" + $(this).height() + "'>" + "<br>" + 
+							"Resize: <div id='resize' style='width: 400px;'></div>"
 						);
+						$("#resize").slider({ max: editable_area.width(), min: 1, 
+											  value: $(this).width(),
+						 					  slide: function(event, ui) { 
+												image.width(ui.value);
+												image.height(ui.value / image_ratio);
+												} 
+											  });
 						// Sets a change event for each input that will update the relevant attribute
 						// on the clicked upon element
 						$("*", $("#spikePropertyInspector")).each(function() {
