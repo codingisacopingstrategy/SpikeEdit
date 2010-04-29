@@ -45,7 +45,12 @@ jQuery(function($) {
 						// on the clicked upon element
 						$("*", $("#spikePropertyInspector")).each(function() {
 							$(this).change(function() {
-								clicked_element.attr($(this).attr("name"), $(this).val());
+								if ($(this).attr("name") == 'width')
+								{ clicked_element.animate({ width: $(this).val(), height: $(this).val() / image_ratio }); }
+								else if ($(this).attr("name") == 'height')
+								{ clicked_element.animate({ height: $(this).val(), width: $(this).val() * image_ratio }); }
+								else
+								{ clicked_element.attr($(this).attr("name"), $(this).val()); }
 							});
 						});
 					}
