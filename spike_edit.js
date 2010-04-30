@@ -43,7 +43,7 @@ jQuery(function($) {
 												refreshPropertyInspector(image);
 												} 
 											  });
-						
+												
 						// Sets a change event for each input that will update the relevant attribute
 						// on the clicked upon element
 						$("input", $("#spikePropertyInspector")).each(function() {
@@ -79,6 +79,9 @@ jQuery(function($) {
 		});
 		
 		if (!$.browser.msie) { document.execCommand("styleWithCSS", false, false); }
+		
+		// This can be used to disable the resizing of images in Firefox
+		// document.execCommand("enableObjectResizing", false, false);
 	}
 	
 	function createToolbar() {
@@ -133,7 +136,7 @@ jQuery(function($) {
 		// Mozilla needs to be refocused on the current editable area
 		if ($.browser.mozilla) { current_focused_editable.focus(); }
 	}
-	
+		
 	activateEditableAreas();
 	createToolbar();
 	createPropertyInspector();
