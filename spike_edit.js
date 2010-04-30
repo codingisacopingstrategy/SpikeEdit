@@ -23,34 +23,49 @@ jQuery(function($) {
 					// Keep track of this elements for the events below
 					var clicked_element = $(this);
 					// Just concentrating on images for now
-					if ($(this).attr("src"))
+					if (clicked_element.attr("src"))
 					{
 						var image = $(this);
 						var image_ratio = image.width() / image.height();
 						// Updates the property inspector with inputs for this element
 						$("#spikePropertyInspector").html(
-							"Source: <input name='src' value='" + $(this).attr("src") + "'>" + "<br>" +
-							"Width: <input name='width' value='" + $(this).width() + "'>" + " " +
-							"Height: <input name='height' value='" + $(this).height() + "'>" + "<br>" + 
+							"Source: <input name='src' value='" + image.attr("src") + "'>" + "<br>" +
+							"Width: <input name='width' value='" + image.width() + "'>" + " " +
+							"Height: <input name='height' value='" + image.height() + "'>" + "<br>" + 
 							"Resize: <div id='resize' style='width: 400px;'></div>"
 						);
+						// Create the resizable slider. The maximum width is the width of the content area
 						$("#resize").slider({ max: editable_area.width(), min: 1, 
-											  value: $(this).width(),
+											  value: image.width(),
 						 					  slide: function(event, ui) { 
 												image.width(ui.value);
 												image.height(ui.value / image_ratio);
+												refreshPropertyInspector(image);
 												} 
 											  });
+						
 						// Sets a change event for each input that will update the relevant attribute
 						// on the clicked upon element
-						$("*", $("#spikePropertyInspector")).each(function() {
+						$("input", $("#spikePropertyInspector")).each(function() {
 							$(this).change(function() {
 								if ($(this).attr("name") == 'width')
-								{ clicked_element.animate({ width: $(this).val(), height: $(this).val() / image_ratio }); }
+								{ 
+									clicked_element.animate({ width: $(this).val(), 
+															  height: $(this).val() / image_ratio },
+															  { complete: function() { refreshPropertyInspector(image); }
+															});
+								}
 								else if ($(this).attr("name") == 'height')
-								{ clicked_element.animate({ height: $(this).val(), width: $(this).val() * image_ratio }); }
+								{
+									clicked_element.animate({ height: $(this).val(), 
+															  width: $(this).val() * image_ratio },
+															  { complete: function() { refreshPropertyInspector(image); }
+															});
+								}
 								else
-								{ clicked_element.attr($(this).attr("name"), $(this).val()); }
+								{
+									clicked_element.attr($(this).attr("name"), $(this).val());
+								}
 							});
 						});
 					}
@@ -92,6 +107,14 @@ jQuery(function($) {
 	function createPropertyInspector() {
 		// Create the property inspector at the bottom of the screen
 		$("body").append($("<div id='spikePropertyInspector'></div>"));
+	}
+	
+	function refreshPropertyInspector(element) {
+		// Update the property inspector when the image changes
+		$("input", $("#spikePropertyInspector")).each(function() {
+			$(this).val(element.attr($(this).attr("name")));
+		});
+		$("#resize").slider("value", element.width());
 	}
 	
 	// A function to clean up HTML generated
