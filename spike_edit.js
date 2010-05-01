@@ -74,12 +74,24 @@ jQuery(function($) {
 											clicked_element.attr("src", $(this).attr("src"));
 											clicked_element.width($(this).attr("width"));
 											clicked_element.height($(this).attr("height"));
+											image_ratio = clicked_element.width() / clicked_element.height();
+											refreshPropertyInspector(clicked_element);
 										});
 								}
 								else
 								{
 									clicked_element.attr($(this).attr("name"), $(this).val());
 								}
+							});
+							
+							$(this).focus(function() {
+								// Select the contents of the box automatically
+								$(this).select();
+							});
+							
+							$(this).mouseup(function(event){
+								// In safari this stops it deselecting the text again
+								event.preventDefault();
 							});
 						});
 					}
