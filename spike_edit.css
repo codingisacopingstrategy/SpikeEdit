@@ -15,7 +15,7 @@
 	cursor: default;
 }
 .spikeEditable img:focus {
-	outline: none;
+	outline: dotted 1px #6FAEE4;
 }
 #spikeToolbar {
 	background-color: #000000;

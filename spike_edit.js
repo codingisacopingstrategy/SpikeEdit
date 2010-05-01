@@ -13,15 +13,19 @@ jQuery(function($) {
 			});
 			$(this).blur(function() {
 				// This will help us debug the code that a browser generates when we do something
-				$("#debug").text($(this).html());
+				$("#debug").text($.htmlClean($(this).html(), { format: true }));
 			});
+			
+			// Convert HTML for browser compatibility
+			formatFor(editable_area);
 			
 			// Set all descendant nodes to report their properties
 			// to the propery inspector when clicked on
 			$("*", $(this)).each(function() {
 				$(this).click(function() {
 					// Keep track of this elements for the events below
-					var clicked_element = $(this);
+					var clicked_element = $(this);					
+					
 					// Just concentrating on images for now
 					if (clicked_element.attr("src"))
 					{
@@ -62,6 +66,16 @@ jQuery(function($) {
 															  { complete: function() { refreshPropertyInspector(image); }
 															});
 								}
+								else if ($(this).attr("name") == 'src')
+								{									
+									$("<img>")
+										.attr("src", $(this).val())
+										.load(function() {
+											clicked_element.attr("src", $(this).attr("src"));
+											clicked_element.width($(this).attr("width"));
+											clicked_element.height($(this).attr("height"));
+										});
+								}
 								else
 								{
 									clicked_element.attr($(this).attr("name"), $(this).val());
@@ -69,6 +83,16 @@ jQuery(function($) {
 							});
 						});
 					}
+				});
+				
+				// What to do when the element loses selection
+				$(this).focus(function() {
+					$(this).css("outline", "dotted 1px #6FAEE4");
+				});
+				
+				// What to do when the element loses selection
+				$(this).blur(function() {
+					$(this).css("outline", "none");
 				});
 			});
 			// Set all images to be resizable
@@ -127,6 +151,18 @@ jQuery(function($) {
 			$(this).contents().find("b").each(function() {
 				$(this).replaceWith("<strong>" + $(this).html() + "</strong>");
 			});
+		});
+	}
+	
+	function formatFor(editable_area) {
+		if ($.browser.webkit)
+		{ formatForWebkit(editable_area); }
+	}
+	
+	function formatForWebkit(editable_area) {
+		// Webkit prefers bold tags to strong tags
+		editable_area.contents().find("strong").each(function() {
+			$(this).replaceWith("<b>" + $(this).html() + "</b>");
 		});
 	}
 	
