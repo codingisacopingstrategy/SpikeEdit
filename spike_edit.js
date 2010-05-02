@@ -13,7 +13,24 @@ jQuery(function($) {
 			});
 			$(this).blur(function() {
 				// This will help us debug the code that a browser generates when we do something
-				$("#debug").text($.htmlClean($(this).html(), { format: true }));
+				$("#debug").html(
+					"<textarea rows='28' cols'90' id='spesh'>" + 
+					$.htmlClean($(this).html(), { format: true }) + 
+					"</textarea>"
+				);
+				
+				var editor = CodeMirror.fromTextArea("spesh", {
+				  parserfile: ["parsexml.js", 
+							   "parsecss.js", 
+							   "tokenizejavascript.js", 
+							   "parsejavascript.js", 
+							   "parsehtmlmixed.js"],
+				  path: "../code_mirror/js/",
+				  stylesheet: ["../code_mirror/css/xmlcolors.css", 
+							   "../code_mirror/css/jscolors.css", 
+							   "../code_mirror/css/csscolors.css"],
+				  tabMode: "shift"
+				});
 			});
 			
 			// Convert HTML for browser compatibility
