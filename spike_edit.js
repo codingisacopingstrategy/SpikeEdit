@@ -84,7 +84,7 @@ jQuery(function($) {
 							});
 							
 							$(this).focus(function() {
-								// Select the contents of the box automatically
+								// Select the contents of the input automatically
 								$(this).select();
 							});
 							
@@ -96,7 +96,8 @@ jQuery(function($) {
 					}
 				});
 				
-				// What to do when the element loses selection
+				// What to do when the element gains selection
+				// TODO: This could be replaced with jQuery's selection regime
 				$(this).focus(function() {
 					$(this).css("outline", "dotted 1px #6FAEE4");
 				});
@@ -118,45 +119,7 @@ jQuery(function($) {
 		// This can be used to disable the resizing of images in Firefox
 		// document.execCommand("enableObjectResizing", false, false);
 	}
-	
-	function createSourceViewer() {
-		// This will help us debug the code that a browser generates when we do something
-		$("body").append(
-			"<div style='display:none'>" + 
-			"<div id='source'>" +
-			"</div>" + 
-			"</div>"
-		);
 		
-		$("#viewSource").fancybox({
-			'hideOnContentClick': false,
-			'autoDimensions': false,
-			'width': 600,
-			'height': 'auto',
-			'onStart': function() {
-				$("#source").html(
-					"<textarea rows='28' cols'400' id='editor'>" + 
-					$.htmlClean(current_focused_editable.html(), { format: true }) + 
-					"</textarea>"
-				);
-			},
-			'onComplete': function() {
-				CodeMirror.fromTextArea("editor", {
-				  parserfile: ["parsexml.js", 
-							   "parsecss.js", 
-							   "tokenizejavascript.js", 
-							   "parsejavascript.js", 
-							   "parsehtmlmixed.js"],
-				  path: "../code_mirror/js/",
-				  stylesheet: ["../code_mirror/css/xmlcolors.css", 
-							   "../code_mirror/css/jscolors.css", 
-							   "../code_mirror/css/csscolors.css"],
-				  tabMode: "shift"
-				});
-			}
-		});
-	}
-	
 	function createToolbar() {
 		// Create toolbar buttons
 		bold_button = $("<a href='#'>Bold</a>").click(function() {
@@ -171,7 +134,52 @@ jQuery(function($) {
 			spikeExecCommand("underline", false, null);
 		});
 
-		view_source_button = $("<a id='viewSource' href='#source'>View Source</a>")
+		// The view source button loads codemirror in a lightbox (fancybox)
+		view_source_button = $("<a href='#'>View Source</a>").click(function() {
+			// If we've got an editable area in focus
+			if (typeof current_focused_editable != 'undefined')
+			{
+				// Initialize fancybox
+				$.fancybox(
+					// Codemirror wants a textarea with the HTML in it
+					// Heights and widths are set manually and scrolling turned 
+					// off in fancybox to avoid problems
+					"<textarea rows='1' cols='1' id='editor'>" + 
+					$.htmlClean(current_focused_editable.html(), { format: true }) + 
+					"</textarea>",
+					{
+					'hideOnContentClick': false, 
+					'hideOnOverlayClick': false, 
+					'autoDimensions': false, 
+					'width': 800, 
+					'height': 500, 
+					'centerOnScroll': true, 
+					'scrolling': 'no', 
+					'onComplete': function() {
+						// Codemirror initialises here
+						editor = CodeMirror.fromTextArea("editor", {
+						  'parserfile': ["parsexml.js", 
+									   "parsecss.js", 
+									   "tokenizejavascript.js", 
+									   "parsejavascript.js", 
+									   "parsehtmlmixed.js"],
+						  'path': "../code_mirror/js/",
+						  'stylesheet': ["../code_mirror/css/xmlcolors.css", 
+									   "../code_mirror/css/jscolors.css", 
+									   "../code_mirror/css/csscolors.css"],
+						  'tabMode': "shift",
+						  'width': "800px",
+						  'height': "500px"
+						});
+					},
+					'onCleanup': function() {
+						// Take the changed code and apply it to the editable area after cleaning it
+						current_focused_editable.html($.htmlClean(editor.getCode(), { format: true }));
+						formatFor(current_focused_editable);
+					}
+				});
+			}
+		});
 
 		// Create the toolbar at the top of the screen
 		$("body").append($("<div id='spikeToolbar'></div>"));
@@ -182,10 +190,6 @@ jQuery(function($) {
 						  .append(underline_button)
 						  .append(" | ")
 						  .append(view_source_button);
-		
-		$("a#viewSource").fancybox({
-				'hideOnContentClick': true
-		});
 	}
 	
 	function createPropertyInspector() {
@@ -232,7 +236,6 @@ jQuery(function($) {
 		
 	activateEditableAreas();
 	createToolbar();
-	createSourceViewer();
 	createPropertyInspector();
 	
 });
