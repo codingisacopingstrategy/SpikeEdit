@@ -12,27 +12,9 @@ jQuery(function($) {
 				current_focused_editable = $(this);
 			});
 			$(this).blur(function() {
-				// This will help us debug the code that a browser generates when we do something
-				$("#debug").html(
-					"<textarea rows='28' cols'90' id='spesh'>" + 
-					$.htmlClean($(this).html(), { format: true }) + 
-					"</textarea>"
-				);
 				
-				var editor = CodeMirror.fromTextArea("spesh", {
-				  parserfile: ["parsexml.js", 
-							   "parsecss.js", 
-							   "tokenizejavascript.js", 
-							   "parsejavascript.js", 
-							   "parsehtmlmixed.js"],
-				  path: "../code_mirror/js/",
-				  stylesheet: ["../code_mirror/css/xmlcolors.css", 
-							   "../code_mirror/css/jscolors.css", 
-							   "../code_mirror/css/csscolors.css"],
-				  tabMode: "shift"
-				});
 			});
-			
+						
 			// Convert HTML for browser compatibility
 			formatFor(editable_area);
 			
@@ -137,6 +119,44 @@ jQuery(function($) {
 		// document.execCommand("enableObjectResizing", false, false);
 	}
 	
+	function createSourceViewer() {
+		// This will help us debug the code that a browser generates when we do something
+		$("body").append(
+			"<div style='display:none'>" + 
+			"<div id='source'>" +
+			"</div>" + 
+			"</div>"
+		);
+		
+		$("#viewSource").fancybox({
+			'hideOnContentClick': false,
+			'autoDimensions': false,
+			'width': 600,
+			'height': 'auto',
+			'onStart': function() {
+				$("#source").html(
+					"<textarea rows='28' cols'400' id='editor'>" + 
+					$.htmlClean(current_focused_editable.html(), { format: true }) + 
+					"</textarea>"
+				);
+			},
+			'onComplete': function() {
+				CodeMirror.fromTextArea("editor", {
+				  parserfile: ["parsexml.js", 
+							   "parsecss.js", 
+							   "tokenizejavascript.js", 
+							   "parsejavascript.js", 
+							   "parsehtmlmixed.js"],
+				  path: "../code_mirror/js/",
+				  stylesheet: ["../code_mirror/css/xmlcolors.css", 
+							   "../code_mirror/css/jscolors.css", 
+							   "../code_mirror/css/csscolors.css"],
+				  tabMode: "shift"
+				});
+			}
+		});
+	}
+	
 	function createToolbar() {
 		// Create toolbar buttons
 		bold_button = $("<a href='#'>Bold</a>").click(function() {
@@ -151,13 +171,21 @@ jQuery(function($) {
 			spikeExecCommand("underline", false, null);
 		});
 
+		view_source_button = $("<a id='viewSource' href='#source'>View Source</a>")
+
 		// Create the toolbar at the top of the screen
 		$("body").append($("<div id='spikeToolbar'></div>"));
 		$("#spikeToolbar").append(bold_button)
 						  .append(" | ")
 						  .append(italic_button)
 						  .append(" | ")
-						  .append(underline_button);
+						  .append(underline_button)
+						  .append(" | ")
+						  .append(view_source_button);
+		
+		$("a#viewSource").fancybox({
+				'hideOnContentClick': true
+		});
 	}
 	
 	function createPropertyInspector() {
@@ -204,6 +232,7 @@ jQuery(function($) {
 		
 	activateEditableAreas();
 	createToolbar();
+	createSourceViewer();
 	createPropertyInspector();
 	
 });
