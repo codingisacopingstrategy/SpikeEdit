@@ -14,9 +14,19 @@ jQuery(function($) {
 			$(this).blur(function() {
 				
 			});
-						
+			$(this).keypress(function(event) {
+				if (event.which == 13)
+				{
+					if ($.browser.mozilla)
+					{
+						// TODO: prevent mozilla making <br> and replace these with paragraph tags or similar
+						// event.preventDefault();
+					}
+				}
+			});
 			// Convert HTML for browser compatibility
 			formatFor(editable_area);
+			fixDeprecatedCode(editable_area);
 			
 			// Set all descendant nodes to report their properties
 			// to the propery inspector when clicked on
@@ -42,7 +52,9 @@ jQuery(function($) {
 											  value: image.width(),
 						 					  slide: function(event, ui) { 
 												image.width(ui.value);
+												image.attr("width", ui.value);
 												image.height(ui.value / image_ratio);
+												image.attr("height", ui.value / image_ratio);
 												refreshPropertyInspector(image);
 												} 
 											  });
@@ -51,18 +63,29 @@ jQuery(function($) {
 						// on the clicked upon element
 						$("input", $("#spikePropertyInspector")).each(function() {
 							$(this).change(function() {
+								var new_value = $(this).val();
 								if ($(this).attr("name") == 'width')
 								{ 
-									clicked_element.animate({ width: $(this).val(), 
-															  height: $(this).val() / image_ratio },
-															  { complete: function() { refreshPropertyInspector(image); }
+									clicked_element.animate({ width: new_value, 
+															  height: new_value / image_ratio },
+															  { complete: function() 
+																{ 
+																	clicked_element.attr("width", new_value);
+																	clicked_element.attr("height", new_value / image_ratio);
+																	refreshPropertyInspector(image); 
+																}
 															});
 								}
 								else if ($(this).attr("name") == 'height')
 								{
-									clicked_element.animate({ height: $(this).val(), 
-															  width: $(this).val() * image_ratio },
-															  { complete: function() { refreshPropertyInspector(image); }
+									clicked_element.animate({ height: new_value, 
+															  width: new_value * image_ratio },
+															  { complete: function() 
+																{ 
+																	clicked_element.attr("height", new_value);
+																	clicked_element.attr("width", new_value / image_ratio);
+																	refreshPropertyInspector(image); 
+																}
 															});
 								}
 								else if ($(this).attr("name") == 'src')
@@ -73,6 +96,8 @@ jQuery(function($) {
 											clicked_element.attr("src", $(this).attr("src"));
 											clicked_element.width($(this).attr("width"));
 											clicked_element.height($(this).attr("height"));
+											clicked_element.attr("width", $(this).attr("width"));
+											clicked_element.attr("height", $(this).attr("height"));
 											image_ratio = clicked_element.width() / clicked_element.height();
 											refreshPropertyInspector(clicked_element);
 										});
@@ -122,30 +147,36 @@ jQuery(function($) {
 		
 	function createToolbar() {
 		// Create toolbar buttons
-		bold_button = $("<a href='#'>Bold</a>").click(function() {
+		bold_button = $("<a href='#'>Bold</a>").click(function(event) {
 			spikeExecCommand("bold", false, null);
+			event.preventDefault();
 		});
 
-		italic_button = $("<a href='#'>Italic</a>").click(function() {
+		italic_button = $("<a href='#'>Italic</a>").click(function(event) {
 			spikeExecCommand("italic", false, null);
+			event.preventDefault();
 		});
 
-		underline_button = $("<a href='#'>Underline</a>").click(function() {
+		underline_button = $("<a href='#'>Underline</a>").click(function(event) {
 			spikeExecCommand("underline", false, null);
+			event.preventDefault();
 		});
 
 		// The view source button loads codemirror in a lightbox (fancybox)
-		view_source_button = $("<a href='#'>View Source</a>").click(function() {
+		view_source_button = $("<a href='#'>View Source</a>").click(function(event) {
 			// If we've got an editable area in focus
 			if (typeof current_focused_editable != 'undefined')
 			{
+				// Standardise the code
+				formatStandard(current_focused_editable);
+				
 				// Initialize fancybox
 				$.fancybox(
 					// Codemirror wants a textarea with the HTML in it
 					// Heights and widths are set manually and scrolling turned 
 					// off in fancybox to avoid problems
 					"<textarea rows='1' cols='1' id='editor'>" + 
-					$.htmlClean(current_focused_editable.html(), { format: true }) + 
+					current_focused_editable.html() + 
 					"</textarea>",
 					{
 					'hideOnContentClick': false, 
@@ -168,17 +199,20 @@ jQuery(function($) {
 									   "../code_mirror/css/jscolors.css", 
 									   "../code_mirror/css/csscolors.css"],
 						  'tabMode': "shift",
+						  'reindentOnLoad': true,
 						  'width': "800px",
 						  'height': "500px"
 						});
 					},
 					'onCleanup': function() {
 						// Take the changed code and apply it to the editable area after cleaning it
-						current_focused_editable.html($.htmlClean(editor.getCode(), { format: true }));
+						current_focused_editable.html(editor.getCode());
 						formatFor(current_focused_editable);
+						$("#editor").remove();
 					}
 				});
 			}
+			event.preventDefault();
 		});
 
 		// Create the toolbar at the top of the screen
@@ -206,24 +240,39 @@ jQuery(function($) {
 	}
 	
 	// A function to clean up HTML generated
-	function cleanHTMLOutput() {
-		$(".editable").each(function() {
-			// convert bold tags to strong tags
-			$(this).contents().find("b").each(function() {
-				$(this).replaceWith("<strong>" + $(this).html() + "</strong>");
-			});
+	function fixDeprecatedCode(editable_area) {
+		$("img[align]", editable_area).each(function() {
+			$(this).css("float", $(this).attr("align"));
+			$(this).removeAttr("align");
+		});
+		$("img[hspace]", editable_area).each(function() {
+			$(this).css("margin-left", $(this).attr("hspace"));
+			$(this).css("margin-right", $(this).attr("hspace"));
+			$(this).removeAttr("hspace");
+		});
+		$("img[vspace]", editable_area).each(function() {
+			$(this).css("margin-top", $(this).attr("vspace"));
+			$(this).css("margin-bottom", $(this).attr("vspace"));
+			$(this).removeAttr("vspace");
 		});
 	}
 	
 	function formatFor(editable_area) {
 		if ($.browser.webkit)
-		{ formatForWebkit(editable_area); }
+		{ formatForWebkit(editable_area); }		
 	}
 	
 	function formatForWebkit(editable_area) {
 		// Webkit prefers bold tags to strong tags
-		editable_area.contents().find("strong").each(function() {
+		$("strong", editable_area).each(function() {
 			$(this).replaceWith("<b>" + $(this).html() + "</b>");
+		});
+	}
+	
+	function formatStandard(editable_area) {
+		// We prefer bold tags to be strong tags
+		$("b", editable_area).each(function() {
+			$(this).replaceWith("<strong>" + $(this).html() + "</strong>");
 		});
 	}
 	
